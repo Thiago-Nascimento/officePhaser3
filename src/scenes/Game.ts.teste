@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 
 import DialogBox from '../utils/DialogBox';
+import NPC from '../actors/NPC';
 
 export default class Demo extends Phaser.Scene {
     constructor() {
@@ -16,10 +17,11 @@ export default class Demo extends Phaser.Scene {
     
     player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
     
-    shopKeeper!: Phaser.Physics.Arcade.Sprite
     interativo: boolean = false
     
     dialogo!: DialogBox
+
+    shopKeeper!: NPC
 
     verificarInteracao(): void {
         let distancia = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.shopKeeper.x, this.shopKeeper.y)
@@ -45,7 +47,7 @@ export default class Demo extends Phaser.Scene {
         const belowLayer = map.createLayer("AbaixoPlayer", tileset);
         const worldLayer = map.createLayer("NivelPlayer", tileset);
 
-        worldLayer!.setCollisionByProperty({ collides: true })
+        worldLayer.setCollisionByProperty({ collides: true })
 
         this.player = this.physics.add.sprite(250, 300, "atlas", "misa-front")
         this.player.body.setCollideWorldBounds(true)
@@ -62,7 +64,7 @@ export default class Demo extends Phaser.Scene {
                 let wall = this.physics.add.sprite(objeto.x, objeto.y, null, null).setVisible(false).setActive(true).setOrigin(0, 0).setOffset(0, 0)
     
                 wall.body.setSize(objeto.width, objeto.height, false)
-                wall.body.setImmovable()    
+                wall.body.setImmovable()
     
                 this.physics.add.collider(this.player, wall)
             })            
@@ -73,13 +75,18 @@ export default class Demo extends Phaser.Scene {
 
         if (this.camadaNpc) {
             this.camadaNpc.objects.forEach(npc => {
-                let personagem = this.physics.add.sprite(npc.x, npc.y, null, null).setVisible(true).setActive(true).setOrigin(0, 0).setOffset(0, 0)
+                let boneco = new NPC(this, npc.x || 0, npc.y || 0, npc.width || 0, npc.height || 0, "")
+                
 
-                personagem.body.setSize(npc.width, npc.height, false)
-                personagem.body.setImmovable(true)
+                // let personagem = this.physics.add.sprite(npc.x, npc.y, null).setVisible(true).setActive(true).setOrigin(0, 0).setOffset(0, 0)
 
-                this.shopKeeper = personagem
+                // personagem.body.setSize(npc.width, npc.height, false)
+                // personagem.body.setImmovable(true)
 
+                // console.log(personagem);
+                
+
+                this.shopKeeper = boneco
                 
                 this.physics.add.collider(this.player, this.shopKeeper)
             })
